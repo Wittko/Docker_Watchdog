@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name="container")
-public class Container {
+public class Containers {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name= "Id" )
@@ -22,7 +22,7 @@ public class Container {
     @Column(name="discovered_at", updatable = false)
     private LocalDateTime discovered_at;
 
-    public Container() {
+    public Containers() {
 
     }
 

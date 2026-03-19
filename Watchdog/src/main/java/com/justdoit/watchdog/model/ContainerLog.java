@@ -1,7 +1,6 @@
 package com.justdoit.watchdog.model;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
@@ -15,7 +14,7 @@ public class ContainerLog {
     private int logId;
     @ManyToOne
     @JoinColumn(name = "containerId", nullable = false)
-    private Container container;
+    private Containers container;
     @Column(name="status")
     private String status;
     @Column(name="cpu_percent")
@@ -38,11 +37,11 @@ public class ContainerLog {
         this.logId = logId;
     }
 
-    public Container getContainer() {
+    public Containers getContainer() {
         return container;
     }
 
-    public void setContainer(Container container) {
+    public void setContainer(Containers container) {
         this.container = container;
     }
 

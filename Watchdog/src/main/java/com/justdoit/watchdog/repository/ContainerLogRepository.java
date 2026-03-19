@@ -1,8 +1,8 @@
 package com.justdoit.watchdog.repository;
 
+import com.justdoit.watchdog.model.Containers;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-import com.justdoit.watchdog.model.Containers;
 
 @Repository
-public interface ContainerRepository extends JpaRepository<Containers, Integer>{}
+public interface ContainerLogRepository extends JpaRepository<Containers, Integer>{}
