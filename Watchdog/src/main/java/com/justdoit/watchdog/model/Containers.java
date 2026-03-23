@@ -6,14 +6,14 @@ import org.hibernate.annotations.CreationTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="container")
+@Table(name="containers")
 public class Containers {
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
-    @Column(name= "Id" )
-    private int Id;
-    @Column(name="containerId" )
-    private String containerId;
+    @Column(name= "count" )
+    private int count;
+    @Column(name="dockerId" )
+    private String dockerId;
     @Column(name="name" )
     private String name;
     @Column(name="image")
@@ -26,20 +26,20 @@ public class Containers {
 
     }
 
-    public int getId() {
-        return Id;
+    public int getCount() {
+        return count;
     }
 
-    public void setId(int id) {
-        Id = id;
+    public void setCount(int count) {
+        this.count = count;
     }
 
-    public String getContainerId() {
-        return containerId;
+    public String getDockerId() {
+        return dockerId;
     }
 
-    public void setContainerId(String containerId) {
-        this.containerId = containerId;
+    public void setDockerId(String containerId) {
+        this.dockerId = containerId;
     }
 
     public String getName() {
