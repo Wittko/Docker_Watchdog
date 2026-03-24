@@ -6,7 +6,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name="container_logs")
+@Table(name="containerLogs")
 public class ContainerLog {
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -17,13 +17,13 @@ public class ContainerLog {
     private Containers container;
     @Column(name="status")
     private String status;
-    @Column(name="cpu_percent")
-    private double cpu_percent;
-    @Column(name="memory_usage_mb")
-    private double memory_usage_mb;
+    @Column(name="cpuPercent")
+    private double cpuPercent;
+    @Column(name="memoryUsageMb")
+    private double memoryUsageMb;
     @UpdateTimestamp
-    @Column(name="logged_at")
-    private LocalDateTime logged_at;
+    @Column(name="loggedAt")
+    private LocalDateTime loggedAt;
 
     public ContainerLog() {
 
@@ -53,28 +53,28 @@ public class ContainerLog {
         this.status = status;
     }
 
-    public double getCpu_percent() {
-        return cpu_percent;
+    public double getCpuPercent() {
+        return cpuPercent;
     }
 
-    public void setCpu_percent(double cpu_percent) {
-        this.cpu_percent = cpu_percent;
+    public void setCpuPercent(double cpuPercent) {
+        this.cpuPercent = cpuPercent;
     }
 
-    public double getMemory_usage_mb() {
-        return memory_usage_mb;
+    public double getMemoryUsageMb() {
+        return memoryUsageMb;
     }
 
-    public void setMemory_usage_mb(double memory_usage_mb) {
-        this.memory_usage_mb = memory_usage_mb;
+    public void setMemoryUsageMb(double memoryUsageMb) {
+        this.memoryUsageMb = memoryUsageMb;
     }
 
-    public LocalDateTime getLogged_at() {
-        return logged_at;
+    public LocalDateTime getLoggedAt() {
+        return loggedAt;
     }
 
-    public void setLogged_at(LocalDateTime logged_at) {
-        this.logged_at = logged_at;
+    public void setLoggedAt(LocalDateTime loggedAt) {
+        this.loggedAt = loggedAt;
     }
 
 }

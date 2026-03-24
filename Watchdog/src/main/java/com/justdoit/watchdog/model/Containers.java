@@ -12,15 +12,15 @@ public class Containers {
     @GeneratedValue(strategy=GenerationType.IDENTITY)
     @Column(name= "count" )
     private int count;
-    @Column(name="dockerId" )
+    @Column(name="dockerId", unique = true )
     private String dockerId;
     @Column(name="name" )
     private String name;
     @Column(name="image")
     private String image;
     @CreationTimestamp
-    @Column(name="discovered_at", updatable = false)
-    private LocalDateTime discovered_at;
+    @Column(name="discoveredAt", updatable = false)
+    private LocalDateTime discoveredAt;
 
     public Containers() {
 
@@ -38,8 +38,8 @@ public class Containers {
         return dockerId;
     }
 
-    public void setDockerId(String containerId) {
-        this.dockerId = containerId;
+    public void setDockerId(String dockerId) {
+        this.dockerId = dockerId;
     }
 
     public String getName() {
@@ -58,12 +58,12 @@ public class Containers {
         this.image = image;
     }
 
-    public LocalDateTime getDiscovered_at() {
-        return discovered_at;
+    public LocalDateTime getDiscoveredAt() {
+        return discoveredAt;
     }
 
-    public void setDiscovered_at(LocalDateTime discovered_at) {
-        this.discovered_at = discovered_at;
+    public void setDiscoveredAt(LocalDateTime discoveredAt) {
+        this.discoveredAt = discoveredAt;
     }
 
 }

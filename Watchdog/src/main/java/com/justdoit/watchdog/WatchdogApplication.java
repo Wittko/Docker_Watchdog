@@ -3,24 +3,15 @@ import com.justdoit.watchdog.service.DockerMonitorService;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import java.util.List;
 
 @SpringBootApplication
-public class WatchdogApplication implements CommandLineRunner {
-
-    private final DockerMonitorService dockerMonitorService;
-
-    public WatchdogApplication(DockerMonitorService dockerMonitorService) {
-        this.dockerMonitorService = dockerMonitorService;
-    }
+@EnableScheduling
+public class WatchdogApplication{
 
     static void main(String[] args) {
         SpringApplication.run(WatchdogApplication.class, args);
-    }
-
-    @Override
-    public void run(String... args) throws Exception {
-        dockerMonitorService.checkContainers();
     }
 }

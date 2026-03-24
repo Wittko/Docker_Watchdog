@@ -9,7 +9,10 @@ import com.justdoit.watchdog.model.ContainerLog;
 import com.justdoit.watchdog.model.Containers;
 import com.justdoit.watchdog.repository.ContainerLogRepository;
 import com.justdoit.watchdog.repository.ContainerRepository;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -41,6 +44,8 @@ public class DockerMonitorService {
                 .build();
     }
 
+    @Scheduled(fixedRate = 30000, initialDelay = 5000)
+    @Transactional
     public void checkContainers(){
         try {
             List<Container> containers = dockerClient.listContainersCmd().withShowAll(true).exec();
@@ -48,7 +53,8 @@ public class DockerMonitorService {
             System.out.println("Erfolg! " + containers.size() + " Container gefunden");
 
             for (Container dockerContainer : containers) {
-                Containers containerEntity = new Containers();
+                Containers containerEntity = containerRepository.findByDockerId(dockerContainer.getId())
+                        .orElse(new Containers());
                 //Docker ID Abfragen
                 containerEntity.setDockerId(dockerContainer.getId());
                 //Dockername abfragen
@@ -57,14 +63,14 @@ public class DockerMonitorService {
                 //Docker Image abfragen
                 containerEntity.setImage(dockerContainer.getImage());
                 //Container Repository speichert
-                containerRepository.save(containerEntity);
+                containerEntity = containerRepository.save(containerEntity);
 
                 //Log-Abteilung
                 ContainerLog log = new ContainerLog();
                 log.setContainer(containerEntity);
                 log.setStatus(dockerContainer.getState());
-                log.setCpu_percent(0.0); //ToDo - Abfragelogik ergänzen
-                log.setMemory_usage_mb(0.0);
+                log.setCpuPercent(0.0); //ToDo - Abfragelogik ergänzen
+                log.setMemoryUsageMb(0.0);
                 containerLogRepository.save(log);
 
                 System.out.println("Container gespeichert: " + conName + " [" + dockerContainer.getState() + "]");
