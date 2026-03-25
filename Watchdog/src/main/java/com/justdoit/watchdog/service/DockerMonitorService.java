@@ -12,8 +12,8 @@ import com.justdoit.watchdog.repository.ContainerRepository;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
+
 
 @Service
 public class DockerMonitorService {
@@ -44,7 +44,7 @@ public class DockerMonitorService {
                 .build();
     }
 
-    @Scheduled(fixedRate = 30000, initialDelay = 5000)
+    @Scheduled(fixedRate = 30000, initialDelay = 2000)
     @Transactional
     public void checkContainers(){
         try {
@@ -75,9 +75,6 @@ public class DockerMonitorService {
 
                 System.out.println("Container gespeichert: " + conName + " [" + dockerContainer.getState() + "]");
 
-//                String name = String.join(", ", container.getNames());
-//                String status = container.getState();
-//                System.out.println(">>Name: " + name + "| Status: [" + status + "]");
             }
         } catch (Exception e) {
             System.err.println("Fehler bei der Kommunikation mit Docker:");
