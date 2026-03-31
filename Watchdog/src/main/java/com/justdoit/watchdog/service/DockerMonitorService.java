@@ -65,6 +65,10 @@ public class DockerMonitorService {
                 //Container Repository speichert
                 containerEntity = containerRepository.save(containerEntity);
 
+                //Pseudocode for CPU/Mem
+                //cpupercentage = new double cpuPerc(get.cpu_delta / get.system_cpu_delta) * get.number_cpus * 100.0
+                //memUsage = new double memUse(get.used_memory / get.available_memory) * 100.0
+
                 //Log-Abteilung
                 ContainerLog log = new ContainerLog();
                 log.setContainer(containerEntity);
