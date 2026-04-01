@@ -1,6 +1,8 @@
 package com.justdoit.watchdog.service;
 import com.github.dockerjava.api.DockerClient;
+import com.github.dockerjava.api.async.ResultCallback;
 import com.github.dockerjava.api.model.Container;
+import com.github.dockerjava.api.model.Statistics;
 import com.github.dockerjava.core.DefaultDockerClientConfig;
 import com.github.dockerjava.core.DockerClientBuilder;
 import com.github.dockerjava.httpclient5.ApacheDockerHttpClient;
@@ -13,6 +15,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 
 @Service
@@ -64,6 +67,34 @@ public class DockerMonitorService {
                 containerEntity.setImage(dockerContainer.getImage());
                 //Container Repository speichert
                 containerEntity = containerRepository.save(containerEntity);
+                //Memory-Usage Code
+                Long bytesUsed = 0L;
+                final Statistics[] statsHolder = new Statistics[1];
+
+                var command = dockerClient.statsCmd(dockerContainer.getId()).withNoStream(true);
+                ResultCallback.Adapter<Statistics> callback = new ResultCallback.Adapter<>(){
+                    @Override
+                    public void onNext(Statistics statistics) {
+                        statsHolder[0] = statistics;
+                        super.onNext(statistics);
+                    }
+                };
+                command.exec(callback);
+
+                try {
+                    callback.awaitCompletion(2, TimeUnit.SECONDS);
+                    Statistics stats = statsHolder[0];
+
+                    if (stats != null && stats.getMemoryStats() != null && stats.getMemoryStats().getUsage() != null) {
+                        bytesUsed = stats.getMemoryStats().getUsage();
+                        System.out.println("Rohdaten Bytes: " + bytesUsed);
+                    }
+                } catch (InterruptedException e) {
+                    System.err.println("Abbruch beim Warten auf Stats");
+                }
+
+// 2. Jetzt die Umrechnung (mit .0 für Präzision)
+                double memoryMb = bytesUsed / (1024.0 * 1024.0);
 
                 //Pseudocode for CPU/Mem
                 //cpupercentage = new double cpuPerc(get.cpu_delta / get.system_cpu_delta) * get.number_cpus * 100.0
@@ -74,7 +105,7 @@ public class DockerMonitorService {
                 log.setContainer(containerEntity);
                 log.setStatus(dockerContainer.getState());
                 log.setCpuPercent(0.0); //ToDo - Abfragelogik ergänzen
-                log.setMemoryUsageMb(0.0);
+                log.setMemoryUsageMb(memoryMb);
                 containerLogRepository.save(log);
 
                 System.out.println("Container gespeichert: " + conName + " [" + dockerContainer.getState() + "]");
