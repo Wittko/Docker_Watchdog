@@ -57,7 +57,7 @@ public class DockerMonitorService {
                 .orElse(new Containers());
 
         entity.setDockerId(dockerContainer.getId());
-        entity.setName(dockerContainer.getNames()[0].replace("/", "");
+        entity.setName(dockerContainer.getNames()[0].replace("/", ""));
         entity.setImage(dockerContainer.getImage());
 
         return containerRepository.save(entity);
