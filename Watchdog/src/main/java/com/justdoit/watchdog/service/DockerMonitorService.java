@@ -47,7 +47,7 @@ public class DockerMonitorService {
                 .build();
     }
 
-    @Scheduled(fixedRate = 30000, initialDelay = 2000)
+    @Scheduled(fixedRate = 60000, initialDelay = 2000)
     @Transactional
     public void checkContainers(){
         try {
@@ -67,10 +67,23 @@ public class DockerMonitorService {
                 containerEntity.setImage(dockerContainer.getImage());
                 //Container Repository speichert
                 containerEntity = containerRepository.save(containerEntity);
-                //Memory-Usage Code
-                Long bytesUsed = 0L;
-                final Statistics[] statsHolder = new Statistics[1];
+                //Statistics Code
+                String currentState = dockerContainer.getState();
+                if ("exited".equalsIgnoreCase(currentState)) {
+                    try {
+                        var inspect = dockerClient.inspectContainerCmd(dockerContainer.getId()).exec();
+                        int exitCode = inspect.getState().getExitCode();
 
+                        if (exitCode != 0) {
+                            currentState = "ERROR (" + exitCode + ")";
+                        }
+                    } catch (Exception e) {
+                        currentState = "ERROR (" + e.getMessage() + ")";
+                    }
+                }
+                System.out.println("Container: " + conName + " | Status: " + currentState);
+                    //Placeholder für Statistics (onNext)
+                final Statistics[] statsHolder = new Statistics[1];
                 var command = dockerClient.statsCmd(dockerContainer.getId()).withNoStream(true);
                 ResultCallback.Adapter<Statistics> callback = new ResultCallback.Adapter<>(){
                     @Override
@@ -80,37 +93,59 @@ public class DockerMonitorService {
                     }
                 };
                 command.exec(callback);
-
+                // Memory Usage
+                Long memUsage = 0L;
                 try {
-                    callback.awaitCompletion(2, TimeUnit.SECONDS);
+                    callback.awaitCompletion(5, TimeUnit.SECONDS);
                     Statistics stats = statsHolder[0];
 
                     if (stats != null && stats.getMemoryStats() != null && stats.getMemoryStats().getUsage() != null) {
-                        bytesUsed = stats.getMemoryStats().getUsage();
-                        System.out.println("Rohdaten Bytes: " + bytesUsed);
+                        memUsage = stats.getMemoryStats().getUsage();
+                        System.out.println(conName + " - Speicherverbrauch in Bytes: " + memUsage);
                     }
                 } catch (InterruptedException e) {
                     System.err.println("Abbruch beim Warten auf Stats");
                 }
+                double memoryMb = memUsage / (1024.0 * 1024.0);
+                double cpuUsage = 0.0;
+                try {
+                    callback.awaitCompletion(5, TimeUnit.SECONDS);
+                    Statistics stats = statsHolder[0];
 
-// 2. Jetzt die Umrechnung (mit .0 für Präzision)
-                double memoryMb = bytesUsed / (1024.0 * 1024.0);
+                    if (stats == null) {
+                        System.out.println("Timeout: Keine CPU Stats");
+                        return;
+                    }
 
-                //Pseudocode for CPU/Mem
-                //cpupercentage = new double cpuPerc(get.cpu_delta / get.system_cpu_delta) * get.number_cpus * 100.0
-                //memUsage = new double memUse(get.used_memory / get.available_memory) * 100.0
+                    if (
+                            stats.getCpuStats() != null &&
+                            stats.getPreCpuStats() != null &&
+                            stats.getCpuStats().getCpuUsage() != null &&
+                            stats.getPreCpuStats().getCpuUsage() != null &&
+                            stats.getCpuStats().getOnlineCpus() != null){
+
+                        double cpuDelta = (double) stats.getCpuStats().getCpuUsage().getTotalUsage() - stats.getPreCpuStats().getCpuUsage().getTotalUsage();
+                        double systemDelta = (double) stats.getCpuStats().getSystemCpuUsage() - stats.getPreCpuStats().getSystemCpuUsage();
+                        double onlineCpus = stats.getCpuStats().getOnlineCpus();
+                        if (cpuDelta > 0.0 && systemDelta > 0.0) {
+                            cpuUsage = (cpuDelta/systemDelta) * onlineCpus * 100.0;
+                        }
+                    }
+                } catch (InterruptedException e) {
+                    System.out.println("Abbruch beim CPU-Scan");
+                }
+                double calcCpu = cpuUsage;
 
                 //Log-Abteilung
                 ContainerLog log = new ContainerLog();
                 log.setContainer(containerEntity);
                 log.setStatus(dockerContainer.getState());
-                log.setCpuPercent(0.0); //ToDo - Abfragelogik ergänzen
+                log.setCpuPercent(calcCpu); //ToDo - Abfragelogik ergänzen
                 log.setMemoryUsageMb(memoryMb);
                 containerLogRepository.save(log);
 
-                System.out.println("Container gespeichert: " + conName + " [" + dockerContainer.getState() + "]");
+                System.out.println("Container gespeichert: " + conName + " [" + dockerContainer.getState() + "]");}
 
-            }
         } catch (Exception e) {
             System.err.println("Fehler bei der Kommunikation mit Docker:");
             e.printStackTrace();
