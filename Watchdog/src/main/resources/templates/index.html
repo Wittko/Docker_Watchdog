@@ -2,9 +2,53 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Dashboard</title>
+    <title>Docker Watchdog Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta http-equiv="refresh" content="30">
 </head>
-<body>
-<h1 th:text="${begruessung}">Platzhalter-Text</h1>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1 class="text-primary">JuSt a Docker Watchdog</h1>
+        <span class="badge bg-secondary" th:text="${#temporals.format(#temporals.createNow(), 'HH:mm:ss')}">Uhrzeit</span>
+    </div>
+
+    <div class="card shadow">
+        <div class="card-body">
+            <table class="table table-hover">
+                <thead class="table-dark">
+
+                <tr>
+                    <th>Container Name</th>
+                    <th>Status</th>
+                    <th>CPU %</th>
+                    <th>RAM (MB)</th>
+                    <th>Image</th>
+                    <th>ContainerLog</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="c : ${containerListe}">
+                    <td class="fw-bold" th:text="${c.name}">Name</td>
+                    <td>
+                                <span th:class="${c.status == 'running'} ? 'badge bg-success' : 'badge bg-danger'"
+                                      th:text="${c.status}">
+                                    status
+                                </span>
+                    </td>
+                    <td th:text="${#numbers.formatDecimal(c.cpu_percent, 1, 2)} + ' %'">0.00 %</td>
+                    <td th:text="${#numbers.formatDecimal(c.memory_usage_mb, 1, 2)} + ' MB'">0.0 MB</td>
+                    <td class="text-muted small" th:text="${c.image}">Image</td>
+                    <td><a th:href="@{/logs/{name}(name=${c.name})}" class="btn btn-sm btn-outline-primary">
+                        Statuslog</a></td>
+                </tr>
+                <
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
 </body>
 </html>

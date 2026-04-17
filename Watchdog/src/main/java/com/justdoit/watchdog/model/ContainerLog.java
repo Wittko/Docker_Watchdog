@@ -1,10 +1,12 @@
 package com.justdoit.watchdog.model;
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.UpdateTimestamp;
 import java.time.LocalDateTime;
 
 
 @Entity
+@Data
 @Table(name="containerLogs")
 public class ContainerLog {
     @Id
@@ -27,53 +29,4 @@ public class ContainerLog {
     public ContainerLog() {
 
     }
-
-    public int getLogId() {
-        return logId;
-    }
-
-    public void setLogId(int logId) {
-        this.logId = logId;
-    }
-
-    public Containers getContainer() {
-        return container;
-    }
-
-    public void setContainer(Containers container) {
-        this.container = container;
-    }
-
-    public String getStatus() {
-        return status;
-    }
-
-    public void setStatus(String status) {
-        this.status = status;
-    }
-
-    public double getCpuPercent() {
-        return cpuPercent;
-    }
-
-    public void setCpuPercent(double cpuPercent) {
-        this.cpuPercent = cpuPercent;
-    }
-
-    public double getMemoryUsageMb() {
-        return memoryUsageMb;
-    }
-
-    public void setMemoryUsageMb(double memoryUsageMb) {
-        this.memoryUsageMb = memoryUsageMb;
-    }
-
-    public LocalDateTime getLoggedAt() {
-        return loggedAt;
-    }
-
-    public void setLoggedAt(LocalDateTime loggedAt) {
-        this.loggedAt = loggedAt;
-    }
-
 }

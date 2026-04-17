@@ -8,4 +8,7 @@ import java.util.Optional;
 @Repository
 public interface ContainerRepository extends JpaRepository<Containers, Integer>{
     Optional<Containers> findByDockerId(String count);
+    Containers findByName(String name);
 }
+
+

@@ -24,7 +24,7 @@ public class DockerMonitorService {
     private final ContainerLogRepository containerLogRepository;
     private final DockerClient dockerClient;
 
-    @Scheduled(fixedRate = 60000, initialDelay = 2000)
+    @Scheduled(fixedRate = 30000, initialDelay = 1000)
     @Transactional
     public void checkContainers() {
         try {

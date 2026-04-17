@@ -1,11 +1,13 @@
 package com.justdoit.watchdog.model;
 
 import jakarta.persistence.*;
+import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
+@Data
 @Table(name="containers")
 public class Containers {
     @Id
@@ -25,46 +27,5 @@ public class Containers {
     public Containers() {
 
     }
-
-    public int getCount() {
-        return count;
-    }
-
-    public void setCount(int count) {
-        this.count = count;
-    }
-
-    public String getDockerId() {
-        return dockerId;
-    }
-
-    public void setDockerId(String dockerId) {
-        this.dockerId = dockerId;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getImage() {
-        return image;
-    }
-
-    public void setImage(String image) {
-        this.image = image;
-    }
-
-    public LocalDateTime getDiscoveredAt() {
-        return discoveredAt;
-    }
-
-    public void setDiscoveredAt(LocalDateTime discoveredAt) {
-        this.discoveredAt = discoveredAt;
-    }
-
 }
 
