@@ -1,5 +1,5 @@
-# Basis-Image mit Java 17
-FROM openjdk:17-jdk-slim
+# Basis-Image eclipse alpine da openjdk nicht mehr supported
+FROM eclipse-temurin:25-jdk-alpine
 
 # Arbeitsverzeichnis im Container
 WORKDIR /app
