@@ -5,25 +5,34 @@ services:
     ports:
       - "8520:8520"
     depends_on:
-      - watchdog-db
-    volumes:
-      # Die Nabelschnur zu Docker:
-      - /var/run/docker.sock:/var/run/docker.sock
+      watchdog-db:
+        condition: service_healthy
     environment:
       - SPRING_DATASOURCE_URL=jdbc:mariadb://watchdog-db:3306/watchdog_db
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=root
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - TZ=Europe/Berlin
+    volumes:
+      # Hier wird der native Linux-Socket in den Container durchgereicht
+      - /var/run/docker.sock:/var/run/docker.sock
 
   watchdog-db:
     image: mariadb:latest
     container_name: watchdog-db
     environment:
-      MARIADB_ROOT_PASSWORD: deinpw
-      MARIADB_DATABASE: watchdog_db
+      - MARIADB_ROOT_PASSWORD=root
+      - MARIADB_DATABASE=watchdog_db
+      - TZ=Europe/Berlin
     ports:
       - "3306:3306"
     volumes:
-      # Der Tresor für deine Logs:
       - mariadb_data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "healthcheck.sh", "--connect", "--innodb_initialized"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
 
-# Hier wird das Volume offiziell bei Docker angemeldet
 volumes:
   mariadb_data:

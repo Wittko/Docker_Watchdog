@@ -16,7 +16,7 @@ public class Containers {
     private int count;
     @Column(name="dockerId", unique = true )
     private String dockerId;
-    @Column(name="name" )
+    @Column(name="name", unique = true )
     private String name;
     @Column(name="image")
     private String image;
