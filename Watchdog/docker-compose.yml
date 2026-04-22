@@ -2,6 +2,7 @@ services:
   watchdog-app:
     build: .
     container_name: watchdog-app
+    restart: unless-stopped
     ports:
       - "8520:8520"
     depends_on:
@@ -20,6 +21,7 @@ services:
   watchdog-db:
     image: mariadb:latest
     container_name: watchdog-db
+    restart: unless-stopped
     environment:
       - MARIADB_ROOT_PASSWORD=root
       - MARIADB_DATABASE=watchdog_db
