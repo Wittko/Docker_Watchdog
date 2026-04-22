@@ -29,7 +29,7 @@ public class DockerMonitorService {
     @Transactional
     public void checkContainers() {
         try {
-            List<Container> containers = dockerClient.listContainersCmd().withShowAll(true).exec();
+            List<Container> containers = dockerClient.listContainersCmd().withShowAll(false).exec();
             log.info("Erfolg! {} Container gefunden", containers.size());
 
             for (Container dockerContainer : containers) {
