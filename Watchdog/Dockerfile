@@ -1,5 +1,5 @@
 # Basis-Image eclipse alpine da openjdk nicht mehr supported
-FROM eclipse-temurin:21-jdk-alpine
+FROM eclipse-temurin:21-jre-alpine
 
 # Arbeitsverzeichnis im Container
 WORKDIR /app

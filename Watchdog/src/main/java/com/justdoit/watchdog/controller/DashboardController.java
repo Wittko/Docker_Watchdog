@@ -58,7 +58,7 @@ public class DashboardController {
         Containers container = containerRepository.findByName(name);
 
         if (container != null) {
-            List<ContainerLog> historyLogs = logRepository.findTop100ByContainerOrderByLoggedAtDesc(container);
+            List<ContainerLog> historyLogs = logRepository.findTop120ByContainerOrderByLoggedAtDesc(container);
 
             model.addAttribute("containerName", container.getName());
             model.addAttribute("logListe", historyLogs);

@@ -11,5 +11,5 @@ import java.util.List;
 @Repository
 public interface ContainerLogRepository extends JpaRepository<ContainerLog, Integer> {
     ContainerLog findFirstByContainerOrderByLoggedAtDesc(Containers container);
-    List<ContainerLog> findTop100ByContainerOrderByLoggedAtDesc(Containers container);
+    List<ContainerLog> findTop120ByContainerOrderByLoggedAtDesc(Containers container);
 }
